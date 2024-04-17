@@ -50,6 +50,21 @@ app.post("/upload", upload.single("file"), async (req, res) => {
         }
 });
 
+// Endpoint to list files in S3 bucket
+app.get("/files", async (req, res) => {
+        const params = {
+                Bucket: "secure-cloud-drive",
+        };
+
+        try {
+                const data = await s3.listObjectsV2(params).promise();
+                res.json(data.Contents);
+        } catch (err) {
+                console.error("Error listing files:", err);
+                res.status(500).send("Error listing files");
+        }
+});
+
 // Endpoint to download and decrypt a file from S3
 app.get("/download/:key", async (req, res) => {
         const { key } = req.params;

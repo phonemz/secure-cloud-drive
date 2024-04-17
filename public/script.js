@@ -24,7 +24,7 @@ document.getElementById("uploadForm").addEventListener(
 
                         if (response.ok) {
                                 alert("File uploaded successfully!");
-                                listFiles();
+                                listFiles(); // Refresh file list after upload
                         } else {
                                 throw new Error("Upload failed");
                         }
