@@ -1,0 +1,43 @@
+<!-- public/index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+        <head>
+                <meta charset="UTF-8" />
+                <meta
+                        name="viewport"
+                        content="width=device-width, initial-scale=1.0"
+                />
+                <title>Secure Cloud Drive</title>
+                <link rel="stylesheet" href="styles.css" />
+        </head>
+        <body>
+                <!-- Navigation Bar -->
+                <nav>
+                        <h1>Secure Cloud Drive</h1>
+                </nav>
+
+                <!-- File Upload Section -->
+                <section id="uploadSection" class="container">
+                        <h2>Upload File</h2>
+                        <form id="uploadForm" enctype="multipart/form-data">
+                                <input
+                                        type="file"
+                                        name="fileInput"
+                                        id="fileInput"
+                                        accept=".txt,.pdf,.doc,.docx"
+                                        required
+                                />
+                                <button type="submit">Upload</button>
+                        </form>
+                </section>
+
+                <!-- Uploaded Files Section -->
+                <section id="filesSection" class="container">
+                        <h2>Uploaded Files</h2>
+                        <div id="fileList"></div>
+                </section>
+
+                <script src="script.js"></script>
+        </body>
+</html>
