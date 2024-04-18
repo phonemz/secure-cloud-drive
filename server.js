@@ -2,7 +2,6 @@
 
 const express = require("express");
 const AWS = require("aws-sdk");
-const bodyParser = require("body-parser");
 const multer = require("multer");
 const fs = require("fs");
 
@@ -21,10 +20,6 @@ const kms = new AWS.KMS();
 
 // Configure multer for file uploads
 const upload = multer({ dest: "uploads/" });
-
-// Middleware to parse JSON and URL-encoded bodies
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
 // Endpoint to upload a file to S3
 app.post("/upload", upload.single("file"), async (req, res) => {
@@ -76,18 +71,42 @@ app.get("/download/:key", async (req, res) => {
 
         try {
                 const data = await s3.getObject(params).promise();
-                const decryptedData = await kms
-                        .decrypt({ CiphertextBlob: data.Body })
-                        .promise();
 
-                // Send decrypted file as a response
-                res.attachment(key);
-                res.send(decryptedData.Plaintext.toString());
+                // Determine the content type based on file extension
+                const contentType = getFileContentType(key);
+
+                // Set the appropriate Content-Type header
+                res.set("Content-Type", contentType);
+
+                // Send file content as buffer
+                res.send(data.Body);
         } catch (err) {
                 console.error("Error downloading file:", err);
                 res.status(500).send("Error downloading file");
         }
 });
+
+// Helper function to determine content type based on file extension
+function getFileContentType(filename) {
+        const ext = filename.split(".").pop().toLowerCase();
+        switch (ext) {
+                case "txt":
+                        return "text/plain";
+                case "pdf":
+                        return "application/pdf";
+                case "doc":
+                case "docx":
+                        return "application/msword";
+                case "jpg":
+                case "jpeg":
+                        return "image/jpeg";
+                case "png":
+                        return "image/png";
+                // Add more cases for other file types as needed
+                default:
+                        return "application/octet-stream"; // Default binary stream
+        }
+}
 
 // Serve static files from the 'public' directory
 app.use(express.static("public"));
